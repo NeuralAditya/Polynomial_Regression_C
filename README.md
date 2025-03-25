@@ -41,7 +41,8 @@ git clone https://github.com/NeuralAditya/Linear_Regression_C.git
 cd Linear_Regression_C
 
 # Compile with optimizations
-gcc src/*.c -o lr -lm -O3 -Wall
+gcc src/linear_regression.c -o lr -Wall -Wextra -lm
+.\lr
 
 # Generate sample data (optional)
 python scripts/generate_data.py
