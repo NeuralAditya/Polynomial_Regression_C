@@ -6,7 +6,7 @@
 
 A high-performance implementation of gradient descent-based linear regression in pure C, designed for embedded systems and computational efficiency.
 
-![Regression Visualization](docs/results.png)
+![Regression Visualization](docs/regression_plot.png)
 
 ## Features
 
