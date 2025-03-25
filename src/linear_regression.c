@@ -90,13 +90,13 @@ int main() {
     LinearModel model = {NULL, NULL, 0, 0, 0};
 
     // Load data (replace with your dataset)
-    load_data("data.csv", &model);
+    load_data("../data/data.csv", &model);
 
     // Train model
     train(&model, 0.01, 1000);
 
     // Save results
-    save_predictions(&model, "predictions.csv");
+    save_predictions(&model, "../data/predictions.csv");
 
     // Free memory
     free(model.X);
