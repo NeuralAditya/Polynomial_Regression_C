@@ -1,0 +1,31 @@
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dll
+
+# Build directories
+build/
+bin/
+obj/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Dataset cache (exclude all CSV except samples)
+data/*.csv
+!data/sample.csv
+!data/synthetic.csv
+
+# Logs and temp files
+*.log
+*.tmp
