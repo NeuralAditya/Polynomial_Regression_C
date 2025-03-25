@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build C Program",
+        "type": "shell",
+        "command": "gcc",
+        "args": [
+          "-g",
+          "linear_regression.c",
+          "-o",
+          "linear_regression",
+          "-lm"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }
