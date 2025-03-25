@@ -6,7 +6,7 @@
 
 A high-performance implementation of gradient descent-based linear regression in pure C, designed for embedded systems and computational efficiency.
 
-![Regression Visualization](docs/results.png)
+![Regression Visualization](docs/regression_plot.png)
 
 ## Features
 
@@ -147,6 +147,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Your Name - Aditya Arora - adityaarora15898@gmail.com
+Aditya Arora - adityaarora15898@gmail.com
 
 Project Link: [https://github.com/NeuralAditya/Linear_Regression_C](https://github.com/NeuralAditya/Linear_Regression_C)
