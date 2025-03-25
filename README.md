@@ -37,7 +37,7 @@ A high-performance implementation of gradient descent-based linear regression in
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/Linear_Regression_C.git
+git clone https://github.com/NeuralAditya/Linear_Regression_C.git
 cd Linear_Regression_C
 
 # Compile with optimizations
