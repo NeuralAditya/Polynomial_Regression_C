@@ -1,59 +1,57 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-import os
 from pathlib import Path
 
-# Set paths
-project_root = Path(__file__).parent.parent
+# Define paths
+project_root = Path(__file__).resolve().parent.parent
 csv_path = project_root / 'data' / 'predictions.csv'
 output_path = project_root / 'docs' / 'regression_plot.png'
+
+# Ensure the output directory exists
+output_path.parent.mkdir(parents=True, exist_ok=True)
 
 # Load data
 try:
     df = pd.read_csv(csv_path)
+    print(f"Loaded data from {csv_path}")
 except FileNotFoundError:
     print(f"Error: File not found at {csv_path}")
     print("Please run the C program first to generate predictions.csv")
     exit(1)
 
-# Create plot with modern style
-plt.style.use('default')  # Reset to default first
-plt.rcParams.update({
-    'figure.facecolor': 'white',
-    'axes.grid': True,
-    'grid.alpha': 0.3,
-    'axes.edgecolor': '.8',
-    'axes.labelcolor': '.15',
-    'xtick.color': '.15',
-    'ytick.color': '.15'
-})
+# Ensure data is sorted by x for smooth plotting
+df = df.sort_values(by="x")
 
+# Create a modern plot
+plt.style.use('ggplot')
 fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
 
-# Plot data
-ax.scatter(df['x'], df['y_true'], 
-           color='#2b8cbe', edgecolor='white',
-           s=100, label='True Data', alpha=0.7)
-ax.plot(df['x'], df['y_pred'], 
-        color='#e41a1c', linewidth=2.5,
-        label='Regression Fit')
+# Scatter plot of actual data
+ax.scatter(df['x'], df['y_true'], color='blue', label='True Data', edgecolor='white', s=100, alpha=0.7)
 
-# Add equation annotation
-equation = r'$y = 0.851x + 1.481$' + '\n' + r'$R^2 = {:.3f}$'.format(
-    df['y_pred'].corr(df['y_true'])**2)
-ax.annotate(equation, xy=(0.05, 0.85), xycoords='axes fraction',
-            fontsize=12, bbox=dict(boxstyle="round", alpha=0.8, facecolor='white'))
+# Polynomial regression fit
+ax.plot(df['x'], df['y_pred'], color='red', linewidth=2, label='Polynomial Regression Fit')
 
-# Customize plot
-ax.set_xlabel('Input Feature (X)', fontweight='bold')
-ax.set_ylabel('Target Value (y)', fontweight='bold')
-ax.set_title('Linear Regression Results\n(C Implementation)', 
-             fontsize=14, pad=20, fontweight='bold')
-ax.legend(frameon=True, framealpha=0.9)
+# Fit polynomial equation dynamically
+degree = min(len(df) - 1, 5)  # Limit polynomial degree to avoid overfitting
+coeffs = np.polyfit(df['x'], df['y_pred'], deg=degree)
+poly_eq = " + ".join([f"{coeff:.3f}x^{i}" for i, coeff in enumerate(coeffs[::-1])])
 
-# Save and show
+# Display equation and R^2 value
+r_squared = df['y_pred'].corr(df['y_true'])**2
+annotation_text = rf'$y = {poly_eq}$' + f'\n$R^2 = {r_squared:.3f}$'
+ax.annotate(annotation_text, xy=(0.05, 0.85), xycoords='axes fraction', fontsize=12, 
+            bbox=dict(boxstyle="round", facecolor='white', alpha=0.8))
+
+# Labels and title
+ax.set_xlabel('Input Feature (X)', fontsize=12, fontweight='bold')
+ax.set_ylabel('Target Value (y)', fontsize=12, fontweight='bold')
+ax.set_title('Polynomial Regression Results (C Implementation)', fontsize=14, fontweight='bold', pad=20)
+ax.legend()
+
+# Save and show plot
 plt.tight_layout()
-output_path.parent.mkdir(exist_ok=True)
 plt.savefig(output_path, bbox_inches='tight')
 print(f"Plot saved to {output_path}")
 plt.show()

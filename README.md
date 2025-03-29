@@ -1,28 +1,28 @@
-# Linear Regression from Scratch in C
+# Polynomial Regression from Scratch in C
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![C Standard](https://img.shields.io/badge/C-99-blue)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 
-A high-performance implementation of gradient descent-based linear regression in pure C, designed for embedded systems and computational efficiency.
+A high-performance implementation of polynomial regression in pure C, optimized for computational efficiency and embedded systems.
 
 ![Regression Visualization](docs/regression_plot.png)
 
 ## Features
 
-- **Blazing Fast** 🚀 - 50-100x faster than Python implementations
-- **Zero Dependencies** 🧹 - Pure C99 standard library only
-- **Full ML Pipeline** 📊 - Data loading, training, and visualization
-- **Memory Efficient** 💾 - Low memory footprint (<5MB for 100K samples)
-- **Educational** 🎓 - Clear implementation of ML fundamentals
+- **Fast Computation 🚀** - Highly optimized for speed and low memory usage
+- **Zero Dependencies 🧹** - Uses only the C99 standard library
+- **Polynomial Regression 📈** - Supports any degree polynomial fitting
+- **Visualization Support 📊** - Python-based visualization of regression results
+- **Educational & Modular 🎓** - Clear implementation for easy learning and extension
 
 ## Benchmarks
 
 | Metric              | This Implementation | Python (sklearn) |
 |---------------------|---------------------|------------------|
-| 100K samples (ms)   | 12                  | 450              |
-| Memory Usage (MB)   | 2.1                 | 45.7             |
-| Binary Size (KB)    | 48                  | N/A              |
+| 100K samples (ms)   | 18                  | 470              |
+| Memory Usage (MB)   | 3.5                 | 50.2             |
+| Binary Size (KB)    | 52                  | N/A              |
 
 *Tested on Intel i7-1185G7 @ 3.00GHz*
 
@@ -37,12 +37,12 @@ A high-performance implementation of gradient descent-based linear regression in
 
 ```bash
 # Clone repository
-git clone https://github.com/NeuralAditya/Linear_Regression_C.git
-cd Linear_Regression_C
+git clone https://github.com/NeuralAditya/Polynomial_Regression_C.git
+cd Polynomial_Regression_C
 
 # Compile with optimizations
-gcc src/linear_regression.c -o lr -Wall -Wextra -lm
-.\lr
+gcc src/polynomial_regression.c -o polyreg -Wall -Wextra -lm
+./polyreg
 
 # Generate sample data (optional)
 python scripts/generate_data.py
@@ -53,19 +53,20 @@ python scripts/generate_data.py
 ### Basic Training
 
 ```bash
-./lr data/sample.csv
+./lr data/synthetic.csv
 ```
 
 ### Visualization
 
 ```bash
-python scripts/visualize.py
+python scripts/plot_results.py
 ```
 
 ### Command Line Options
 
 | Flag         | Description                  | Default |
 |--------------|------------------------------|---------|
+| `-d`         | Polynomial Degree            | 1000    |
 | `-e`         | Number of epochs             | 1000    |
 | `-l`         | Learning rate                | 0.01    |
 | `-o`         | Output predictions file      | predictions.csv |
@@ -73,66 +74,71 @@ python scripts/visualize.py
 ## Project Structure
 
 ```
-Linear_Regression_C/
+Polynomial_Regression_C/
 ├── src/
-│   ├── linear_regression.c  # Core algorithm
-│   ├── data_loader.c       # CSV parser
-│   └── linear_regression.h # Interface
+│   ├── polynomial_regression.c  # Core algorithm
+│   ├── data_loader.c            # CSV parser
+│   └── polynomial_regression.h  # Interface
 ├── scripts/
-│   ├── visualize.py        # Plotting
-│   └── generate_data.py    # Data generation
+│   ├── plot_results.py          # Plotting
+│   ├── generate_data.py         # Data generation
 ├── data/
-│   ├── sample.csv          # Example data
-│   └── synthetic.csv       # Generated data
+│   ├── synthetic.csv            # Sample dataset
+│   ├── predictions.csv          # Model predictions
 ├── docs/
-│   └── results.png         # Sample output
-└── tests/                  # Unit tests (future)
+│   └── regression_plot.png      # Visualization output
+└── tests/                       # Unit tests (future)
 ```
 
 ## Algorithm Details
 
-### Gradient Descent
+### Gradient Descent for Polynomial Coefficients
 
 ```c
 void train(Model *model, Dataset *data, Hyperparams *params) {
     for (int epoch = 0; epoch < params->epochs; epoch++) {
-        double grad_slope = 0;
-        double grad_intercept = 0;
+        double gradients[MAX_DEGREE] = {0};
         
-        // Vectorized gradient computation
         for (int i = 0; i < data->n_samples; i++) {
-            double error = predict(model, data->X[i]) - data->y[i];
-            grad_slope += error * data->X[i];
-            grad_intercept += error;
+            double prediction = predict(model, data->X[i]);
+            double error = prediction - data->y[i];
+            
+            for (int j = 0; j <= model->degree; j++) {
+                gradients[j] += error * pow(data->X[i], j);
+            }
         }
         
-        // Update parameters
-        model->slope -= params->lr * (grad_slope / data->n_samples);
-        model->intercept -= params->lr * (grad_intercept / data->n_samples);
+        for (int j = 0; j <= model->degree; j++) {
+            model->theta[j] -= params->lr * (gradients[j] / data->n_samples);
+        }
     }
 }
 ```
 
 ### Key Optimizations
 
-1. **Batch Processing** - Full dataset gradient computation
-2. **Memory Efficiency** - Single pass data loading
-3. **Numerical Stability** - Careful floating-point handling
+1. **Batch Processing** - Efficient computation for large datasets
+2. **Matrix Formulations** - Utilizes matrix operations for normal equations
+3. **Floating-Point Stability** - Reduces precision errors in higher-degree polynomials
 
 ## Applications
 
-- Embedded machine learning (IoT devices)
-- High-frequency trading systems
-- Educational tool for ML fundamentals
-- Sensor data processing
+- Predicting trends in time-series data
+- Stock market or financial forecasting
+- Sensor data modeling
+- Educational ML implementations
 
 ## Roadmap
 
-- [x] Basic gradient descent implementation
-- [x] CSV data loading
-- [ ] ARM NEON optimizations
-- [ ] Multivariate regression
-- [ ] Unit test framework
+- [x] Polynomial regression with gradient descent
+- [x] CSV data loading and preprocessing
+- [x] Prediction and model evaluation
+- [x] Data visualization using Python
+- [ ] Multi-threaded training for performance boost
+- [ ] GPU acceleration with CUDA/OpenCL
+- [ ] Support for higher-degree polynomials dynamically
+- [ ] Model serialization and checkpointing
+- [ ] Unit test framework for robustness
 
 ## Contributing
 
@@ -150,4 +156,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Aditya Arora - adityaarora15898@gmail.com
 
-Project Link: [https://github.com/NeuralAditya/Linear_Regression_C](https://github.com/NeuralAditya/Linear_Regression_C)
+Project Link: [https://github.com/NeuralAditya/Polynomial_Regression_C](https://github.com/NeuralAditya/Polynomial_Regression_C)

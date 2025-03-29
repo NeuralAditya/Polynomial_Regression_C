@@ -21,10 +21,11 @@ obj/
 .DS_Store
 Thumbs.db
 
-# Dataset cache (exclude all CSV except samples)
+# Dataset cache (exclude only important CSV files)
 data/*.csv
 !data/sample.csv
 !data/synthetic.csv
+!data/polynomial_data.csv  # ✅ Keep generated polynomial dataset
 
 # Logs and temp files
 *.log
